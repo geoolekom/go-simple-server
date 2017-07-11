@@ -18,11 +18,14 @@ func (s Storage) SelectUser(id int) (*models.User, error) {
 	var user models.User
 	count := 0
 	for rows.Next() {
-		if count == 1 {
-			return nil, errors.New("Returns more than one!")
-		}
 		err = rows.Scan(&user.Id, &user.Email, &user.FirstName, &user.LastName, &user.Gender, &user.BirthDate)
 		count ++
+	}
+
+	if count > 1 {
+		return nil, errors.New("Returns more than one!")
+	} else if count == 0 {
+		return nil, errors.New("Not found!")
 	}
 	err = rows.Err()
 	if err != nil {
