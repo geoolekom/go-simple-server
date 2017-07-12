@@ -3,6 +3,7 @@ package models
 type Database interface {
 	SelectUser(id int) (*User, error)
 	SelectLocation(id int) (*Location, error)
+	SelectVisit(id int) (*Visit, error)
 }
 
 type Model struct { Database }

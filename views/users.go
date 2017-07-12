@@ -12,16 +12,19 @@ func GetUserHandler(m *models.Model) httprouter.Handle {
 	return func (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		id, err := strconv.ParseInt(ps.ByName("id"), 10, 32)
 		if err != nil {
-			w.WriteHeader(500)
+			w.WriteHeader(404)
+			return
 		}
+
 		user, err := m.SelectUser(int(id))
 		if err != nil {
 			w.WriteHeader(404)
-		} else {
-			w.Header().Set("Content-Type", "application/json; charset=utf-8")
-			if err = json.NewEncoder(w).Encode(user); err != nil {
-				w.WriteHeader(500)
-			}
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err = json.NewEncoder(w).Encode(user); err != nil {
+			w.WriteHeader(500)
 		}
 	}
 }

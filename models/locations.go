@@ -2,5 +2,8 @@ package models
 
 type Location struct {
 	Id int `json:"id"`
-	Name string `json:"name"`
+	Place string `json:"place"`
+	Country string `json:"country"`
+	City string `json:"city"`
+	Distance int `json:"distance"`
 }

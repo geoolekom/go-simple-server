@@ -9,10 +9,11 @@ import (
 
 type Storage struct {
 	connection *sql.DB
+	userSelector *sql.Stmt
 }
 
-func (s Storage) createTablesIfNotExist() error {
-	ddlFile, _ := filepath.Abs("database/ddl.sql")
+func (s *Storage) createTablesIfNotExist() error {
+	ddlFile, _ := filepath.Abs("sql/ddl.sql")
 	dat, err := ioutil.ReadFile(ddlFile)
 	if err != nil {
 		return err
@@ -20,6 +21,16 @@ func (s Storage) createTablesIfNotExist() error {
 	createSql := string(dat)
 	_, err = s.connection.Exec(createSql)
 	return err
+}
+
+func (s *Storage) prepareStatements() (err error) {
+	s.userSelector, err = s.connection.Prepare("SELECT id, email, first_name, last_name, gender, birth_date FROM \"user\" WHERE id=$1")
+	return err
+}
+
+func (s *Storage) Close() {
+	s.userSelector.Close()
+	s.connection.Close()
 }
 
 func InitDatabase(initString string) (*Storage, error) {
@@ -31,6 +42,9 @@ func InitDatabase(initString string) (*Storage, error) {
 			return nil, err
 		}
 		if err := db.createTablesIfNotExist(); err != nil {
+			return nil, err
+		}
+		if err := db.prepareStatements(); err != nil {
 			return nil, err
 		}
 		return db, nil

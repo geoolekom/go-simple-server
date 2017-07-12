@@ -6,12 +6,7 @@ import (
 )
 
 func (s Storage) SelectUser(id int) (*models.User, error) {
-	stmt, err := s.connection.Prepare("SELECT id, email, first_name, last_name, gender, birth_date FROM \"user\" WHERE id=$1")
-	if err != nil {
-		return nil, err
-	}
-	defer stmt.Close()
-	rows, err := stmt.Query(id)
+	rows, err := s.userSelector.Query(id)
 	if err != nil {
 		return nil, err
 	}
@@ -19,13 +14,16 @@ func (s Storage) SelectUser(id int) (*models.User, error) {
 	count := 0
 	for rows.Next() {
 		err = rows.Scan(&user.Id, &user.Email, &user.FirstName, &user.LastName, &user.Gender, &user.BirthDate)
+		if err != nil {
+			return nil, err
+		}
 		count ++
 	}
 
 	if count > 1 {
-		return nil, errors.New("Returns more than one!")
+		return nil, errors.New("500")
 	} else if count == 0 {
-		return nil, errors.New("Not found!")
+		return nil, errors.New("404")
 	}
 	err = rows.Err()
 	if err != nil {
