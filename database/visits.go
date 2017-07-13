@@ -1,7 +1,33 @@
 package database
 
-import "github.com/geoolekom/go-simple-server/models"
+import (
+	"github.com/geoolekom/go-simple-server/models"
+	"errors"
+)
 
 func (s Storage) SelectVisit(id int) (*models.Visit, error) {
-	return nil, nil
+	rows, err := s.visitSelector.Query(id)
+	if err != nil {
+		return nil, err
+	}
+	var visit models.Visit
+	count := 0
+	for rows.Next() {
+		err = rows.Scan(&visit.Id, &visit.User, &visit.Location, &visit.VisitedAt, &visit.Mark)
+		if err != nil {
+			return nil, err
+		}
+		count ++
+	}
+
+	if count > 1 {
+		return nil, errors.New("500")
+	} else if count == 0 {
+		return nil, errors.New("404")
+	}
+	err = rows.Err()
+	if err != nil {
+		return nil, err
+	}
+	return &visit, nil
 }

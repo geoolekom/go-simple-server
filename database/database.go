@@ -10,6 +10,8 @@ import (
 type Storage struct {
 	connection *sql.DB
 	userSelector *sql.Stmt
+	locationSelector *sql.Stmt
+	visitSelector *sql.Stmt
 }
 
 func (s *Storage) createTablesIfNotExist() error {
@@ -24,12 +26,25 @@ func (s *Storage) createTablesIfNotExist() error {
 }
 
 func (s *Storage) prepareStatements() (err error) {
-	s.userSelector, err = s.connection.Prepare("SELECT id, email, first_name, last_name, gender, birth_date FROM \"user\" WHERE id=$1")
-	return err
+	s.userSelector, err = s.connection.Prepare("SELECT id, email, first_name, last_name, gender, birth_date FROM \"user\" WHERE id = $1")
+	if err != nil {
+		return err
+	}
+	s.locationSelector, err = s.connection.Prepare("SELECT id, place, country, city, distance FROM \"location\" WHERE id = $1")
+	if err != nil {
+		return err
+	}
+	s.visitSelector, err = s.connection.Prepare("SELECT id, user, location, visited_at, mark FROM \"visit\" WHERE id = $1")
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (s *Storage) Close() {
 	s.userSelector.Close()
+	s.locationSelector.Close()
+	s.visitSelector.Close()
 	s.connection.Close()
 }
 

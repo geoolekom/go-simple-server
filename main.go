@@ -12,6 +12,7 @@ import (
 func main() {
 
 	db, err := database.InitDatabase("dbname=gosimpleserver user=postgres password=postgres port=5432")
+	defer db.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
