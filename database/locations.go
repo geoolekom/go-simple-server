@@ -3,7 +3,6 @@ package database
 import (
 	"github.com/geoolekom/go-simple-server/models"
 	"errors"
-	"os/user"
 )
 
 func (s Storage) SelectLocation(id int) (*models.Location, error) {
