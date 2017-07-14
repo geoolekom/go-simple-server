@@ -11,7 +11,7 @@ import (
 
 func main() {
 
-	db, err := database.InitDatabase("dbname=gosimpleserver user=postgres password=postgres port=5432")
+	db, err := database.InitDatabase("dbname=gosimpleserver user=go password=go port=5432")
 	defer db.Close()
 	if err != nil {
 		log.Fatal(err)
@@ -22,5 +22,5 @@ func main() {
 	router.GET("/locations/:id", views.GetLocationHandler(m))
 	router.GET("/users/:id", views.GetUserHandler(m))
 
-	log.Fatal(http.ListenAndServe(":9000", router))
+	log.Fatal(http.ListenAndServe(":80", router))
 }
