@@ -11,11 +11,8 @@ RUN    /etc/init.d/postgresql start &&\
     psql --command "CREATE USER go WITH SUPERUSER PASSWORD 'go';" &&\
     createdb -O go gosimpleserver
 
-RUN echo "host all  all    0.0.0.0/0  md5" >> /etc/postgresql/9.6/main/pg_hba.conf
+RUN echo "host all  all    127.0.0.1/0  md5" >> /etc/postgresql/9.6/main/pg_hba.conf
 RUN echo "listen_addresses='*'" >> /etc/postgresql/9.6/main/postgresql.conf
-EXPOSE 5432
-
-VOLUME  ["/etc/postgresql", "/var/log/postgresql", "/var/lib/postgresql"]
 
 USER root
 WORKDIR /usr/bin
@@ -24,5 +21,5 @@ ADD sql ./sql
 COPY run.sh .
 
 EXPOSE 80
-CMD bash run.sh
+CMD ["bash", "run.sh"]
 

@@ -21,6 +21,7 @@ func main() {
 	router := httprouter.New()
 	router.GET("/locations/:id", views.GetLocationHandler(m))
 	router.GET("/users/:id", views.GetUserHandler(m))
+	router.GET("/visits/:id", views.GetVisitHandler(m))
 
 	log.Fatal(http.ListenAndServe(":80", router))
 }
