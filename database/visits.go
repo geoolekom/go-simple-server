@@ -31,3 +31,8 @@ func (s Storage) SelectVisit(id int) (*models.Visit, error) {
 	}
 	return &visit, nil
 }
+
+func (s Storage) InsertVisit(visit *models.Visit) error {
+	_, err := s.visitInsert.Exec(visit.Id, visit.User, visit.Location, visit.VisitedAt, visit.Mark)
+	return err
+}

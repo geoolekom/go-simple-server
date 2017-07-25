@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   gender GENDER NOT NULL,
-  birth_date TIMESTAMPTZ NOT NULL
+  birth_date DATE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS location (
@@ -21,6 +21,6 @@ CREATE TABLE IF NOT EXISTS visit (
   id SERIAL PRIMARY KEY,
   "user" INTEGER REFERENCES "user" (id),
   location INTEGER REFERENCES location (id),
-  visited_at TIMESTAMPTZ NOT NULL,
+  visited_at TIMESTAMP NOT NULL,
   mark INTEGER CHECK (mark > 0 AND mark <= 5)
 );

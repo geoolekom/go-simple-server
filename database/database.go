@@ -8,10 +8,13 @@ import (
 )
 
 type Storage struct {
-	connection *sql.DB
-	userSelector *sql.Stmt
+	connection       *sql.DB
+	userSelector     *sql.Stmt
+	userInsert       *sql.Stmt
 	locationSelector *sql.Stmt
-	visitSelector *sql.Stmt
+	locationInsert	 *sql.Stmt
+	visitSelector    *sql.Stmt
+	visitInsert	     *sql.Stmt
 }
 
 func (s *Storage) createTablesIfNotExist() error {
@@ -30,11 +33,23 @@ func (s *Storage) prepareStatements() (err error) {
 	if err != nil {
 		return err
 	}
+	s.userInsert, err = s.connection.Prepare("INSERT INTO \"user\" (id, email, first_name, last_name, gender, birth_date) VALUES ($1, $2, $3, $4, $5, $6)")
+	if err != nil {
+		return err
+	}
 	s.locationSelector, err = s.connection.Prepare("SELECT id, place, country, city, distance FROM \"location\" WHERE id = $1")
 	if err != nil {
 		return err
 	}
+	s.locationInsert, err = s.connection.Prepare("INSERT INTO \"location\" (id, place, country, city, distance) VALUES ($1, $2, $3, $4, $5)")
+	if err != nil {
+		return err
+	}
 	s.visitSelector, err = s.connection.Prepare("SELECT id, user, location, visited_at, mark FROM \"visit\" WHERE id = $1")
+	if err != nil {
+		return err
+	}
+	s.visitInsert, err = s.connection.Prepare("INSERT INTO \"visit\" (id, \"user\", location, visited_at, mark) VALUES ($1, $2, $3, $4, $5)")
 	if err != nil {
 		return err
 	}
@@ -43,8 +58,11 @@ func (s *Storage) prepareStatements() (err error) {
 
 func (s *Storage) Close() {
 	s.userSelector.Close()
+	s.userInsert.Close()
 	s.locationSelector.Close()
+	s.locationInsert.Close()
 	s.visitSelector.Close()
+	s.visitInsert.Close()
 	s.connection.Close()
 }
 

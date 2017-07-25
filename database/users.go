@@ -31,3 +31,8 @@ func (s Storage) SelectUser(id int) (*models.User, error) {
 	}
 	return &user, nil
 }
+
+func (s Storage) InsertUser(user *models.User) error {
+	_, err := s.userInsert.Exec(user.Id, user.Email, user.FirstName, user.LastName, user.Gender, user.BirthDate)
+	return err
+}
