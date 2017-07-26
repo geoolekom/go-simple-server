@@ -1,7 +1,7 @@
-CREATE OR REPLACE FUNCTION avg_mark(id INTEGER)
+CREATE OR REPLACE FUNCTION avg_mark(location_id INTEGER)
 RETURNS INTEGER
 AS $$
-  SELECT avg(mark) FROM visit WHERE location_id = id;
+  SELECT avg(mark) FROM visit WHERE "location" = location_id;
 $$
 LANGUAGE sql;
 

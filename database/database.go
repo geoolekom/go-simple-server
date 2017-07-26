@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	_ "github.com/bmizerany/pq"
+	_ "github.com/lib/pq"
 	"io/ioutil"
 	"path/filepath"
 )
@@ -33,7 +33,7 @@ func (s *Storage) prepareStatements() (err error) {
 	if err != nil {
 		return err
 	}
-	s.userInsert, err = s.connection.Prepare("INSERT INTO \"user\" (id, email, first_name, last_name, gender, birth_date) VALUES ($1, $2, $3, $4, $5, $6)")
+	s.userInsert, err = s.connection.Prepare("INSERT INTO \"user\" (id, email, first_name, last_name, gender, birth_date) VALUES ($1, $2, $3, $4, $5, to_date($6, 'DD.MM.YYYY'))")
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func (s *Storage) prepareStatements() (err error) {
 	if err != nil {
 		return err
 	}
-	s.visitInsert, err = s.connection.Prepare("INSERT INTO \"visit\" (id, \"user\", location, visited_at, mark) VALUES ($1, $2, $3, $4, $5)")
+	s.visitInsert, err = s.connection.Prepare("INSERT INTO \"visit\" (id, \"user\", location, visited_at, mark) VALUES ($1, $2, $3, to_timestamp($4, 'DD.MM.YYYY HH24:MI:SS'), $5)")
 	if err != nil {
 		return err
 	}

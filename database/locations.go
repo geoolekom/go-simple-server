@@ -32,7 +32,12 @@ func (s Storage) SelectLocation(id int) (*models.Location, error) {
 	return &location, nil
 }
 
-func (s Storage) InsertLocation(location *models.Location) error {
-	_, err := s.locationInsert.Exec(location.Id, location.Place, location.Country, location.City, location.Distance)
-	return err
+func (s Storage) InsertLocation(locations []models.Location) error {
+	for _, location := range locations {
+		_, err := s.locationInsert.Exec(location.Id, location.Place, location.Country, location.City, location.Distance)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }

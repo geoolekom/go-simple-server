@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"strings"
 	"github.com/geoolekom/go-simple-server/models"
+	"fmt"
 )
 
 type Data struct {
@@ -21,21 +22,31 @@ func LoadData(m *models.Model) {
 		if !strings.HasSuffix(path, ".json") {
 			return nil
 		}
+		fmt.Println("File", path)
 		bytes, err := ioutil.ReadFile(path)
+		if err != nil {
+			return err
+		}
 		var data Data
 		json.Unmarshal(bytes, &data)
-
-		for _, user := range data.Users {
-			m.InsertUser(&user)
+		fmt.Println("\tInserting users")
+		err = m.InsertUser(data.Users)
+		if err != nil {
+			fmt.Println(err)
 		}
-		for _, location := range data.Locations {
-			m.InsertLocation(&location)
+		fmt.Println("\tInserting locations")
+		err = m.InsertLocation(data.Locations)
+		if err != nil {
+			fmt.Println(err)
 		}
-		for _, visit := range data.Visits {
-			m.InsertVisit(&visit)
+		fmt.Println("\tInserting visits")
+		err = m.InsertVisit(data.Visits)
+		if err != nil {
+			fmt.Println(err)
 		}
-		return err
+		return nil
 	}); err != nil {
 		panic(err)
 	}
+	fmt.Println("Data is loaded.")
 }
