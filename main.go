@@ -25,11 +25,17 @@ func main() {
 
 	router := httprouter.New()
 	router.NotFound = http.HandlerFunc(views.NotFoundHandler)
+
 	router.GET("/locations/:id", views.GetLocationHandler(m))
+	router.POST("/locations/:id", views.PostLocationHandler(m))
+
 	router.GET("/users/:id", views.GetUserHandler(m))
+	router.POST("/users/:id", views.PostUserHandler(m))
+
 	router.GET("/visits/:id", views.GetVisitHandler(m))
+	router.POST("/visits/:id", views.PostVisitHandler(m))
 
 	fmt.Println("Now serving.")
-	log.Fatal(http.ListenAndServe(":9000", router))
+	log.Fatal(http.ListenAndServe(":80", router))
 	fmt.Println("Server is down.")
 }

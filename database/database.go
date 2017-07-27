@@ -29,7 +29,7 @@ func (s *Storage) createTablesIfNotExist() error {
 }
 
 func (s *Storage) prepareStatements() (err error) {
-	s.userSelector, err = s.connection.Prepare("SELECT id, email, first_name, last_name, gender, birth_date FROM \"user\" WHERE id = $1")
+	s.userSelector, err = s.connection.Prepare("SELECT id, email, first_name, last_name, gender, to_char(birth_date, 'DD.MM.YYYY') AS birth_date FROM \"user\" WHERE id = $1")
 	if err != nil {
 		return err
 	}
@@ -45,7 +45,7 @@ func (s *Storage) prepareStatements() (err error) {
 	if err != nil {
 		return err
 	}
-	s.visitSelector, err = s.connection.Prepare("SELECT id, user, location, visited_at, mark FROM \"visit\" WHERE id = $1")
+	s.visitSelector, err = s.connection.Prepare("SELECT id, \"user\", location, to_char(visited_at, 'DD.MM.YYYY HH24:MI:SS') AS visited_at, mark FROM \"visit\" WHERE id = $1")
 	if err != nil {
 		return err
 	}
