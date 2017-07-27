@@ -32,26 +32,29 @@ func PostUserHandler(m *models.Model) httprouter.Handle {
 	return func (w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
+		var user models.User
+		err := json.NewDecoder(r.Body).Decode(&user)
+		if err != nil || user.BirthDate == "" {
+			BadRequestHandler(w, r)
+			return
+		}
+
 		if ps.ByName("id") == "new" {
 			users := make([]models.User, 1)
-			err := json.NewDecoder(r.Body).Decode(&users[0])
-			if err != nil || users[0].BirthDate == "" {
-				BadRequestHandler(w, r)
-				return
-			}
+			users[0] = user
 			if err := m.InsertUser(users); err != nil {
 				BadRequestHandler(w, r)
 				return
 			}
 		} else {
-			id, err := strconv.ParseInt(ps.ByName("id"), 10, 32)
 
+			_, err = strconv.ParseInt(ps.ByName("id"), 10, 32)
 			if err != nil {
 				NotFoundHandler(w, r)
 				return
 			}
 
-			_, err = m.SelectUser(int(id))
+			err = m.UpdateUser(user)
 			if err != nil {
 				NotFoundHandler(w, r)
 				return

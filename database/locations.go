@@ -41,3 +41,18 @@ func (s Storage) InsertLocation(locations []models.Location) error {
 	}
 	return nil
 }
+
+func (s Storage) UpdateLocation(location models.Location) error {
+	rows, err := s.locationUpdate.Exec(location.Id, location.Place, location.Country, location.City, location.Distance)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := rows.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("404")
+	}
+	return err
+}

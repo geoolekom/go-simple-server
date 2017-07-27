@@ -41,3 +41,18 @@ func (s Storage) InsertUser(users []models.User) error {
 	}
 	return nil
 }
+
+func (s Storage) UpdateUser(user models.User) error {
+	rows, err := s.userUpdate.Exec(user.Id, user.Email, user.FirstName, user.LastName, user.Gender, user.BirthDate)
+	if err != nil {
+		return err
+	}
+	rowsAffected, err := rows.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsAffected == 0 {
+		return errors.New("404")
+	}
+	return err
+}

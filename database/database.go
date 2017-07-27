@@ -11,10 +11,13 @@ type Storage struct {
 	connection       *sql.DB
 	userSelector     *sql.Stmt
 	userInsert       *sql.Stmt
+	userUpdate       *sql.Stmt
 	locationSelector *sql.Stmt
 	locationInsert	 *sql.Stmt
+	locationUpdate   *sql.Stmt
 	visitSelector    *sql.Stmt
 	visitInsert	     *sql.Stmt
+	visitUpdate      *sql.Stmt
 }
 
 func (s *Storage) createTablesIfNotExist() error {
@@ -37,11 +40,19 @@ func (s *Storage) prepareStatements() (err error) {
 	if err != nil {
 		return err
 	}
+	s.userUpdate, err = s.connection.Prepare("UPDATE \"user\" SET id = $1, email = $2, first_name = $3, last_name = $4, gender = $5, birth_date = to_date($6, 'DD.MM.YYYY') WHERE id = $1")
+	if err != nil {
+		return err
+	}
 	s.locationSelector, err = s.connection.Prepare("SELECT id, place, country, city, distance FROM \"location\" WHERE id = $1")
 	if err != nil {
 		return err
 	}
 	s.locationInsert, err = s.connection.Prepare("INSERT INTO \"location\" (id, place, country, city, distance) VALUES ($1, $2, $3, $4, $5)")
+	if err != nil {
+		return err
+	}
+	s.locationUpdate, err = s.connection.Prepare("UPDATE \"location\" SET id = $1, place = $2, country = $3, city = $4, distance = $5 WHERE id = $1")
 	if err != nil {
 		return err
 	}
@@ -53,12 +64,17 @@ func (s *Storage) prepareStatements() (err error) {
 	if err != nil {
 		return err
 	}
+	s.visitUpdate, err = s.connection.Prepare("UPDATE \"visit\" SET id = $1, \"user\" = $2, location = $3, visited_at = to_timestamp($4, 'DD.MM.YYYY HH24:MI:SS'), mark = $5 WHERE id = $1")
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
 func (s *Storage) Close() {
 	s.userSelector.Close()
 	s.userInsert.Close()
+	s.userUpdate.Close()
 	s.locationSelector.Close()
 	s.locationInsert.Close()
 	s.visitSelector.Close()

@@ -7,6 +7,9 @@ type Database interface {
 	InsertUser(users []User) error
 	InsertLocation(locations []Location) error
 	InsertVisit(visits []Visit) error
+	UpdateUser(user User) error
+	UpdateLocation(location Location) error
+	UpdateVisit(visit Visit) error
 }
 
 type Model struct { Database }
