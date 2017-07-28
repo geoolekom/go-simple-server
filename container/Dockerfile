@@ -11,7 +11,8 @@ RUN /etc/init.d/postgresql start && \
     createdb -O go gosimpleserver && \
     echo "host all  all    127.0.0.1/0  md5" >> /etc/postgresql/9.6/main/pg_hba.conf && \
     echo "listen_addresses='*'" >> /etc/postgresql/9.6/main/postgresql.conf && \
-    sed -i "s/^datestyle.*/datestyle = 'iso, dmy'/" /etc/postgresql/9.6/main/postgresql.conf
+    sed -i "s/^datestyle.*/datestyle = 'iso, dmy'/" /etc/postgresql/9.6/main/postgresql.conf && \
+    sed -i "s/^max_connections.*/max_connections = 1000/" /etc/postgresql/9.6/main/postgresql.conf
 
 USER root
 RUN mkdir -p /media/data

@@ -20,7 +20,7 @@ func main() {
 		log.Fatal(err)
 	}
 	m := models.New(db)
-	go parser.LoadData(m)
+	parser.LoadData(m)
 	fmt.Println("Data is loading in goroutine.")
 
 	router := httprouter.New()
@@ -37,5 +37,4 @@ func main() {
 
 	fmt.Println("Now serving.")
 	log.Fatal(http.ListenAndServe(":80", router))
-	fmt.Println("Server is down.")
 }
