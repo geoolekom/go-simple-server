@@ -32,15 +32,15 @@ func (s *Storage) createTablesIfNotExist() error {
 }
 
 func (s *Storage) prepareStatements() (err error) {
-	s.userSelector, err = s.connection.Prepare("SELECT id, email, first_name, last_name, gender, to_char(birth_date, 'DD.MM.YYYY') AS birth_date FROM \"user\" WHERE id = $1")
+	s.userSelector, err = s.connection.Prepare("SELECT id, email, first_name, last_name, gender, extract(EPOCH FROM birth_date)::INTEGER AS birth_date FROM \"user\" WHERE id = $1")
 	if err != nil {
 		return err
 	}
-	s.userInsert, err = s.connection.Prepare("INSERT INTO \"user\" (id, email, first_name, last_name, gender, birth_date) VALUES ($1, $2, $3, $4, $5, to_date($6, 'DD.MM.YYYY'))")
+	s.userInsert, err = s.connection.Prepare("INSERT INTO \"user\" (id, email, first_name, last_name, gender, birth_date) VALUES ($1, $2, $3, $4, $5, to_timestamp($6))")
 	if err != nil {
 		return err
 	}
-	s.userUpdate, err = s.connection.Prepare("UPDATE \"user\" SET id = $1, email = $2, first_name = $3, last_name = $4, gender = $5, birth_date = to_date($6, 'DD.MM.YYYY') WHERE id = $1")
+	s.userUpdate, err = s.connection.Prepare("UPDATE \"user\" SET id = $1, email = $2, first_name = $3, last_name = $4, gender = $5, birth_date = to_timestamp($6) WHERE id = $1")
 	if err != nil {
 		return err
 	}
@@ -56,15 +56,15 @@ func (s *Storage) prepareStatements() (err error) {
 	if err != nil {
 		return err
 	}
-	s.visitSelector, err = s.connection.Prepare("SELECT id, \"user\", location, to_char(visited_at, 'DD.MM.YYYY HH24:MI:SS') AS visited_at, mark FROM \"visit\" WHERE id = $1")
+	s.visitSelector, err = s.connection.Prepare("SELECT id, \"user\", location, extract(EPOCH FROM visited_at)::INTEGER AS visited_at, mark FROM \"visit\" WHERE id = $1")
 	if err != nil {
 		return err
 	}
-	s.visitInsert, err = s.connection.Prepare("INSERT INTO \"visit\" (id, \"user\", location, visited_at, mark) VALUES ($1, $2, $3, to_timestamp($4, 'DD.MM.YYYY HH24:MI:SS'), $5)")
+	s.visitInsert, err = s.connection.Prepare("INSERT INTO \"visit\" (id, \"user\", location, visited_at, mark) VALUES ($1, $2, $3, to_timestamp($4), $5)")
 	if err != nil {
 		return err
 	}
-	s.visitUpdate, err = s.connection.Prepare("UPDATE \"visit\" SET id = $1, \"user\" = $2, location = $3, visited_at = to_timestamp($4, 'DD.MM.YYYY HH24:MI:SS'), mark = $5 WHERE id = $1")
+	s.visitUpdate, err = s.connection.Prepare("UPDATE \"visit\" SET id = $1, \"user\" = $2, location = $3, visited_at = to_timestamp($4), mark = $5 WHERE id = $1")
 	if err != nil {
 		return err
 	}

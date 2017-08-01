@@ -6,5 +6,5 @@ type User struct {
 	FirstName string `json:"first_name"`
 	LastName string `json:"last_name"`
 	Gender string `json:"gender"`
-	BirthDate string `json:"birth_date"`
+	BirthDate int64 `json:"birth_date"`
 }

@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS "user" (
   first_name VARCHAR(50) NOT NULL,
   last_name VARCHAR(50) NOT NULL,
   gender GENDER NOT NULL,
-  birth_date DATE NOT NULL
+  birth_date TIMESTAMP NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS location (
